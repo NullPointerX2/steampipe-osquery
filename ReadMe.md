@@ -197,10 +197,37 @@ powerpipe mod list
 powerpipe benchmark list
 ```
 
+Example:
+
+```
+$ powerpipe benchmark list
+MOD      NAME
+local    local.benchmark.access_to_fs
+local    local.benchmark.access_to_package_mangement_system
+local    local.benchmark.get_runtime_information_about_os_components
+local    local.benchmark.get_runtime_information_about_the_operating_system_from_kernel
+local    local.benchmark.parse_file_content
+```
+
 **Run Benchmark**
 
 ```
 powerpipe benchmark run $benchmark_name
+```
+
+Example:
+
+```
+$ powerpipe benchmark run local.benchmark.access_to_fs
+
+1 Access to File System ............................................................................................................................................................. 3 / 5 [==========]
+| 
++ Ensure permissions on /etc/issue are configured ................................................................................................................................... 0 / 1 [==        ]
+| | 
+| OK   : Permissions on /etc/issue are correctly configured. 
+| 
++ Ensure /tmp is a separate partition ..................................................................................................
+[..]
 ```
 
 **List Single Controls**

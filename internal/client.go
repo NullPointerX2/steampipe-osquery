@@ -16,7 +16,7 @@ import (
 	"time"
 )
 
-const maxBufferSize = 512 * 1024 // 512KB
+const maxBufferSize = 1024 * 1024 // 1024KB
 
 type Query struct {
 	SQL string `json:"query"`
@@ -92,6 +92,11 @@ func NewClient(cfg *ClientConfig, ctx context.Context) (*Client, error) {
 }
 
 func (c *Client) SendQuery(ctx context.Context, sql string) (*Result, error) {
+	// osquery can't handle "~~"
+	if strings.Contains(sql, "~~") {
+		sql = strings.Replace(sql, "~~", "like", -1)
+	}
+
 	query := &Query{SQL: sql}
 	plugin.Logger(ctx).Debug("Sending new message to osquery", "query", sql)
 	encoder := json.NewEncoder(c.osqueryJson)

@@ -1,3 +1,0 @@
-# Benchmark Categories - Overview 
-
-TBD
