@@ -36,7 +36,7 @@ Run this on the system(s) you want to audit.
 **1. Clone Repository**
 
 ```
-git clone https://github.com/fueledByOats/osquery-extension-stdio-json
+git clone https://github.com/NullPointerX2/osquery-steampipe.git
 ```
 
 **2. Build Steampipe Extension**
@@ -58,7 +58,7 @@ Run this on your "audit host", i.e., the system you want to use to audit the oth
 **1. Clone Repository**
 
 ```
-git clone https://github.com/fueledByOats/steampipe-plugin-osquery
+git clone https://github.com/NullPointerX2/steampipe-osquery.git
 ```
 
 **2. Build Plugin To .steampipe**
