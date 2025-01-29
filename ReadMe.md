@@ -67,7 +67,7 @@ git clone https://github.com/NullPointerX2/steampipe-osquery.git
 
 **2. Build Plugin To .steampipe**
 
-At this point, it is important to ensure that the $HOME variable is correctly initialized. This can be checked using the command "echo $HOME".
+At this point, it is important to ensure that the $HOME variable is correctly initialized. This can be checked using the command `echo $HOME`.
 
 ```
 go build -gcflags=all="-N -l" -o "$HOME/.steampipe/plugins/local/osquery/osquery.plugin"
@@ -185,9 +185,9 @@ Run Query (`osquery01` being the name of the connection specified in the config 
 > select * from osquery01.time;
 ```
 
-#### Run Mods
+#### Install and run mods
 
-**Install Mod**
+**Install mods**
 
 ```
 cd mods/benchmark_categories
@@ -197,7 +197,7 @@ powerpipe mod init
 powerpipe mod install benchmark_categories
 ```
 
-In both folderdirectoriess, new files named "mod.sh" should have been created.
+In both directories, new files named "mod.sh" should have been created.
 
 **Check If Mod Is Installed**
 
