@@ -1,8 +1,6 @@
 # Steampipe Osquery Plugin
 
-## Setup
-
-**Disclaimer**: Currently only working on Linux (tested on Ubuntu)
+## Setup for Linux Ubuntu
 
 ### Install Base Tooling
 
@@ -22,9 +20,15 @@ https://powerpipe.io/downloads
 
 3. Install osquery
 
-Install osquery on all systems you want to audit.
+Install osquery on all systems you want to audit. Note: When installing osquery using the apt-repository, we recommend to use the version prior to 22.04, as this version runs more stable.
 
 https://osquery.io/downloads
+
+4. Install go
+
+You can download and install go using established paket managers or follow the documentation.
+
+https://golangdocs.com/install-go-linux
 
 ### Setup Plugins
 
@@ -63,6 +67,8 @@ git clone https://github.com/NullPointerX2/steampipe-osquery.git
 
 **2. Build Plugin To .steampipe**
 
+At this point, it is important to ensure that the $HOME variable is correctly initialized. This can be checked using the command "echo $HOME".
+
 ```
 go build -gcflags=all="-N -l" -o "$HOME/.steampipe/plugins/local/osquery/osquery.plugin"
 ```
@@ -94,9 +100,6 @@ As no SSH authentication can be done interactively within Steampipe, the plugins
 ```
 Host $hostname
   User $user
-  ControlMaster auto
-  ControlPath ~/.ssh/cm_socket/%r@%h:%p
-  ControlPersist 3600
 ```
 
 2. Create ControlPath Folder
@@ -188,8 +191,13 @@ Run Query (`osquery01` being the name of the connection specified in the config 
 
 ```
 cd mods/benchmark_categories
-powerpipe mod install .
+powerpipe mod init
+cd ..
+powerpipe mod init
+powerpipe mod install benchmark_categories
 ```
+
+In both folderdirectoriess, new files named "mod.sh" should have been created.
 
 **Check If Mod Is Installed**
 
@@ -215,7 +223,18 @@ local    local.benchmark.get_runtime_information_about_the_operating_system_from
 local    local.benchmark.parse_file_content
 ```
 
+**Start service**
+
+Open a second terminal window and run ```steampipe service start```
+
 **Run Benchmark**
+
+In the first terminal window, you either enter 
+```
+powerpipe server
+```
+
+and use the front end deployed under the localhost adress presented, or do not enter this command and use the CLI instead using the following: 
 
 ```
 powerpipe benchmark run $benchmark_name
