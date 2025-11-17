@@ -1,0 +1,10 @@
+{
+  "local": {
+    "/home/ubuntu/Documents/steampipe-plugin-osquery/mods/benchmark_categories": {
+      "path": "/home/ubuntu/Documents/steampipe-plugin-osquery/mods/benchmark_categories",
+      "name": "/home/ubuntu/Documents/steampipe-plugin-osquery/mods/benchmark_categories",
+      "struct_version": 20240429,
+      "alias": "local"
+    }
+  }
+}
