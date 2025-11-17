@@ -3,7 +3,6 @@ package osquery
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 
 	"github.com/turbot/steampipe-plugin-sdk/v5/connection"
@@ -91,34 +90,6 @@ func tableOsquery(ctx context.Context, c *plugin.Connection, cc *connection.Conn
 	}, nil
 }
 
-
-/*func staticFileLinesTable(ctx context.Context) *plugin.Table {
-	return &plugin.Table{
-		Name:        "file_lines",
-		Description: "A table for reading lines from files",
-		List: &plugin.ListConfig{
-			Hydrate: listOsqueryTable,
-		},
-		/*Get: &plugin.GetConfig{
-			KeyColumns: plugin.SingleColumn("path"),
-			Hydrate:    getOsqueryTable,
-		},
-		Columns: []*plugin.Column{
-			{
-				Name:        "line",
-				Type:        proto.ColumnType_STRING,
-				Description: "The content of the file line",
-			},
-			{
-				Name:        "path",
-				Type:        proto.ColumnType_STRING,
-				Description: "The path to the file",
-			},
-		},
-	}
-}*/
-
-
 func listOsqueryTable(ctx context.Context, d *plugin.QueryData, _ *plugin.HydrateData) (interface{}, error) {
 
 	conn, err := connect(ctx, d.Connection, d.ConnectionCache)
@@ -162,9 +133,9 @@ func getOsqueryTable(ctx context.Context, d *plugin.QueryData, _ *plugin.Hydrate
 		plugin.Logger(ctx).Error("Error parsing JSON data:", "err", err)
 		return nil, err
 	}
+    
 	if len(rows) == 0 {
-		plugin.Logger(ctx).Error("row is nil")
-		return nil, errors.New("Row data is nil")
+        return nil, nil
 	}
 
 	row := rows[0]

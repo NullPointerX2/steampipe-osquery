@@ -56,21 +56,26 @@ control "ensure_nodev_on_tmp_partition" {
   title = "Ensure nodev option set on /tmp partition"
   description = "The nodev mount option specifies that the filesystem cannot contain special devices. Since the /tmp filesystem is not intended to support devices, this option ensures that users cannot create a block or character special devices in /tmp."
   sql = <<EOT
-    with tmp_mount as (
-      select * from mounts where path = '/tmp'
+    WITH tmp_mount AS (
+        SELECT * FROM mounts WHERE path = '/tmp'
     )
-    select
-      'mounts table' as resource,
-      case
-        when flags like '%nodev%' then 'ok'
-        else 'alarm'
-      end as status,
-      case
-        when flags like '%nodev%' then 'nodev option is set on /tmp partition.'
-        else 'nodev option is not set on /tmp partition. Ensure that /tmp is mounted with nodev.'
-      end as reason
-    from
-      tmp_mount
+    SELECT
+        'mounts table' AS resource,
+        CASE
+            WHEN flags LIKE '%nodev%' THEN 'ok'
+            ELSE 'alarm'
+        END AS status,
+        CASE
+            WHEN flags LIKE '%nodev%' THEN 'nodev option is set on /tmp partition.'
+            ELSE 'nodev option is not set on /tmp partition. Ensure that /tmp is mounted with nodev.'
+        END AS reason
+    FROM tmp_mount
+    UNION
+    SELECT
+        'mounts table' AS resource,
+        'alarm' AS status,
+        'No mount entry found for /tmp. /tmp does not seem to be a partition.' AS reason
+    WHERE NOT EXISTS (SELECT 1 FROM tmp_mount);
   EOT
 }
 

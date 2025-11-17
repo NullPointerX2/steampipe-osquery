@@ -3,6 +3,7 @@ benchmark "parse_file_content" {
   children = [
     control.ensure_audit_logs_not_auto_deleted,
     control.ensure_shadowed_passwords_in_etc_passwd,
+    control.password_failed_attempts_lockout,
   ]
 }
 
@@ -10,21 +11,32 @@ control "ensure_audit_logs_not_auto_deleted" {
   title = "Ensure audit logs are not automatically deleted"
   description = "The max_log_file_action setting in the auditd configuration should be set to 'keep_logs' to ensure that audit logs are rotated but never automatically deleted."
   sql = <<EOT
-    with auditd_conf as (
-      select * from augeas where path = '/etc/audit/auditd.conf' and label = 'max_log_file_action'
+    WITH auditd_conf AS (
+        SELECT * 
+        FROM augeas 
+        WHERE path = '/etc/audit/auditd.conf' AND label = 'max_log_file_action'
     )
-    select
-      'augeas table' as resource,
-      case
-        when value = 'keep_logs' then 'ok'
-        else 'alarm'
-      end as status,
-      case
-        when value = 'keep_logs' then 'Audit logs are set to not be automatically deleted (max_log_file_action = keep_logs).'
-        else 'Audit logs are not configured to keep_logs in max_log_file_action. Ensure it is set to keep_logs to avoid automatic deletion of audit logs.'
-      end as reason
-    from
-      auditd_conf
+    SELECT 
+        'augeas table' AS resource,
+        CASE
+            WHEN auditd_conf.value = 'keep_logs' THEN 'ok'
+            WHEN auditd_conf.value IS NULL THEN 'alarm'
+            ELSE 'alarm'
+        END AS status,
+        CASE
+            WHEN auditd_conf.value = 'keep_logs' THEN 'Audit logs are set to not be automatically deleted (max_log_file_action = keep_logs).'
+            WHEN auditd_conf.value IS NULL THEN 'Audit configuration for max_log_file_action is missing. Ensure that the file exists and contains the correct configuration.'
+            ELSE 'Audit logs are not configured to keep_logs in max_log_file_action. Ensure it is set to keep_logs to avoid automatic deletion of audit logs.'
+        END AS reason
+    FROM auditd_conf
+    UNION
+    SELECT 
+        'augeas table' AS resource,
+        'alarm' AS status,
+        'Audit configuration for max_log_file_action is missing. Ensure that the file exists and contains the correct configuration.' AS reason
+    WHERE NOT EXISTS (
+        SELECT 1 FROM augeas WHERE path = '/etc/audit/auditd.conf' AND label = 'max_log_file_action'
+    );
   EOT
 }
 
@@ -47,5 +59,30 @@ control "ensure_shadowed_passwords_in_etc_passwd" {
       end as reason
     from
       passwd_accounts
+  EOT
+}
+
+control "password_failed_attempts_lockout" {
+  title = "Ensure password failed attempts lockout is configured"
+  description = "Locking out user IDs after n unsuccessful consecutive login attempts mitigates bruteforce password attacks against your systems."
+  sql = <<EOT
+    WITH faillock_config AS (
+        SELECT content
+        FROM file_content
+        WHERE path = '/etc/security/faillock.conf'
+    )
+    SELECT
+        'faillock configuration' AS resource,
+        CASE
+            WHEN content LIKE '%deny%' AND CAST(SUBSTRING(content FROM 'deny\s*=\s*(\d+)') AS INT) <= 5 THEN 'ok'
+            WHEN content LIKE '%deny%' THEN 'alarm'
+            ELSE 'alarm'
+        END AS status,
+        CASE
+            WHEN content LIKE '%deny%' AND CAST(SUBSTRING(content FROM 'deny\s*=\s*(\d+)') AS INT) <= 5 THEN 'The deny option is set correctly (<= 5).'
+            WHEN content LIKE '%deny%' THEN 'The deny option is set to a value greater than 5. Ensure it is set to 5 or less.'
+            ELSE 'The deny option is missing. Ensure it is configured with a valid value.'
+        END AS reason
+    FROM faillock_config;
   EOT
 }
