@@ -69,9 +69,9 @@ cp -r config $HOME/.steampipe/
 
 Information on the config parameters:
 
-`osquery_server` (default: `osqueryi`): this parameter is the command that starts osquery which also results in the creation of an osquery socket (by default $HOME/.osquery/shell.em) that the extensions use.
-`osquery_json` (default: `$HOME/.osquery/steampipe_extension --socket $HOME/.osquery/shell.em`): this parameter is the command that starts the osquery extension that the Steampipe plugin interacts with to run queries.
-`osquery_file_read` (default: `$HOME/.osquery/file_read_extension --socket $HOME/.osquery/shell.em`): this parameter is the command that starts the extension that is used to read arbitrary files on the system.
+- `osquery_server` (default: `osqueryi`): this parameter is the command that starts osquery which also results in the creation of an osquery socket (by default $HOME/.osquery/shell.em) that the extensions use. 
+- `osquery_json` (default: `$HOME/.osquery/steampipe_extension --socket $HOME/.osquery/shell.em`): this parameter is the command that starts the osquery extension that the Steampipe plugin interacts with to run queries. 
+- `osquery_file_read` (default: `$HOME/.osquery/file_read_extension --socket $HOME/.osquery/shell.em`): this parameter is the command that starts the extension that is used to read arbitrary files on the system. 
 
 ##### Use with SSH
 
