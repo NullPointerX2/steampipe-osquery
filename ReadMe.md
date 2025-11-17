@@ -8,15 +8,21 @@
 
 1. Install Steampipe
 
+Install Steampipe on the host you want to use to audit the other systems.
+
 https://steampipe.io/downloads
 
 2. Install Powerpipe
+
+Install Powerpipe on the host you want to use to audit the other systems.
 
 Since March 2024 Powerpipe is the recommended way to run former Steampipe mods.
 
 https://powerpipe.io/downloads
 
 3. Install osquery
+
+Install osquery on all systems you want to audit.
 
 https://osquery.io/downloads
 
